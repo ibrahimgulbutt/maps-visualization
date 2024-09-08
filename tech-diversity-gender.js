@@ -1,5 +1,4 @@
 function TechDiversityGender() {
-
   // Name for the visualisation to appear in the menu bar.
   this.name = 'Tech Diversity: Gender';
 
@@ -10,8 +9,6 @@ function TechDiversityGender() {
   // Layout object to store all common plot layout parameters and
   // methods.
   this.layout = {
-    // Locations of margin positions. Left and bottom have double margin
-    // size due to axis and tick labels.
     leftMargin: 130,
     rightMargin: width,
     topMargin: 30,
@@ -22,11 +19,7 @@ function TechDiversityGender() {
       return this.rightMargin - this.leftMargin;
     },
 
-    // Boolean to enable/disable background grid.
     grid: true,
-
-    // Number of axis tick labels to draw so that they are not drawn on
-    // top of one another.
     numXTickLabels: 10,
     numYTickLabels: 8,
   };
@@ -41,26 +34,62 @@ function TechDiversityGender() {
   // Property to represent whether data has been loaded.
   this.loaded = false;
 
-  // Preload the data. This function is called automatically by the
-  // gallery when a visualisation is added.
+  // Sorting order (default is by company name).
+  this.sortOrder = 'company';
+
+  // Whether to show percentages on bars.
+  this.showPercent = true;
+
+  this.sortBy=null;
+  this.togglePercent=null;
+
+  // Preload the data.
   this.preload = function() {
     var self = this;
     this.data = loadTable(
       './data/tech-diversity/gender-2018.csv', 'csv', 'header',
-      // Callback function to set the value
-      // this.loaded to true.
       function(table) {
         self.loaded = true;
       });
-
   };
 
   this.setup = function() {
-    // Font defaults.
     textSize(16);
+    // Create a sort dropdown
+    this.sortBy = createSelect();
+    this.sortBy.option('Company Name');
+    this.sortBy.option('Female Percentage');
+    this.sortBy.option('Male Percentage');
+    this.sortBy.changed(() => {
+      let selected = this.sortBy.value();
+      if (selected === 'Company Name') {
+        this.sortOrder = 'company';
+      } else if (selected === 'Female Percentage') {
+        this.sortOrder = 'female';
+      } else {
+        this.sortOrder = 'male';
+      }
+      this.sortData();
+    });
+
+    // Toggle percentage display
+    this.togglePercent = createCheckbox('Show Percentages', this.showPercent);
+    this.togglePercent.changed(() => {
+      this.showPercent = this.togglePercent.checked();
+    });
   };
 
   this.destroy = function() {
+  };
+
+  // Sort data based on selected order
+  this.sortData = function() {
+    this.data.rows.sort((a, b) => {
+      if (this.sortOrder === 'company') {
+        return a.get('company').localeCompare(b.get('company'));
+      }
+      return b.getNum(this.sortOrder) - a.getNum(this.sortOrder);
+    });
   };
 
   this.draw = function() {
@@ -69,26 +98,22 @@ function TechDiversityGender() {
       return;
     }
 
-    // Draw Female/Male labels at the top of the plot.
     this.drawCategoryLabels();
+    this.sortData(); // Sort data before drawing
 
     var lineHeight = (height - this.layout.topMargin) /
         this.data.getRowCount();
 
     for (var i = 0; i < this.data.getRowCount(); i++) {
-
-      // Calculate the y position for each company.
       var lineY = (lineHeight * i) + this.layout.topMargin;
 
-      // Create an object that stores data from the current row.
       var company = {
-        // Convert strings to numbers.
         'name': this.data.getString(i, 'company'),
         'female': this.data.getNum(i, 'female'),
         'male': this.data.getNum(i, 'male'),
       };
 
-      // Draw the company name in the left margin.
+      // Company name
       fill(0);
       noStroke();
       textAlign('right', 'top');
@@ -96,19 +121,42 @@ function TechDiversityGender() {
            this.layout.leftMargin - this.layout.pad,
            lineY);
 
-      // Draw female employees rectangle.
+      // Female employees bar
       fill(this.femaleColour);
       rect(this.layout.leftMargin,
            lineY,
            this.mapPercentToWidth(company.female),
            lineHeight - this.layout.pad);
 
-      // Draw male employees rectangle.
+      // Male employees bar
       fill(this.maleColour);
       rect(this.layout.leftMargin + this.mapPercentToWidth(company.female),
            lineY,
            this.mapPercentToWidth(company.male),
            lineHeight - this.layout.pad);
+
+      // Display percentage values if toggled on
+      if (this.showPercent) {
+        fill(0);
+        textAlign('left', 'center');
+        text(`${company.female}%`,
+             this.layout.leftMargin + this.mapPercentToWidth(company.female) - 50,
+             lineY + (lineHeight / 2));
+        textAlign('left', 'center');
+        text(`${company.male}%`,
+             this.layout.leftMargin + this.mapPercentToWidth(company.female) +
+             this.mapPercentToWidth(company.male) - 50,
+             lineY + (lineHeight / 2));
+      }
+
+      // Store data for tooltip
+      if (mouseX > this.layout.leftMargin &&
+          mouseX < this.layout.rightMargin &&
+          mouseY > lineY && mouseY < lineY + lineHeight) {
+        this.hoveredCompany = company;
+        this.hoveredY = lineY;
+        this.hoveredLineHeight = lineHeight;
+      }
     }
 
     // Draw 50% line
@@ -119,6 +167,27 @@ function TechDiversityGender() {
          this.midX,
          this.layout.bottomMargin);
 
+    // Draw legend
+    this.drawLegend();
+
+    // Draw tooltip
+    if (this.hoveredCompany) {
+      this.showHoverInfo(this.hoveredCompany, this.hoveredY, this.hoveredLineHeight);
+    }
+  };
+
+  // Display hover info box
+  this.showHoverInfo = function(company, y, lineHeight) {
+    fill(255);
+    stroke(0);
+    strokeWeight(2); // Ensure tooltip box is visible
+    rect(mouseX + 10, mouseY - 30, 150, 70); // Adjusted position for tooltip
+    fill(0);
+    noStroke();
+    textAlign('left', 'top');
+    text(`Company: ${company.name}`, mouseX + 15, mouseY - 25);
+    text(`Female: ${company.female}%`, mouseX + 15, mouseY - 10);
+    text(`Male: ${company.male}%`, mouseX + 15, mouseY + 5);
   };
 
   this.drawCategoryLabels = function() {
@@ -138,11 +207,47 @@ function TechDiversityGender() {
          this.layout.pad);
   };
 
+  // Draw a simple legend
+// Draw a simple legend
+this.drawLegend = function() {
+  fill(0);
+  textAlign('center', 'top'); // Center text horizontally
+  text('Legend:', width / 2, this.layout.topMargin - 60); // Adjust vertical position
+
+  // Define the spacing for legend items
+  var legendSpacing = 100;
+  var startX = width / 2 - legendSpacing;
+
+  // Female legend
+  fill(this.femaleColour);
+  rect(startX, this.layout.topMargin - 20, 15, 15); // Adjust vertical position
+  fill(0);
+  text('Female', startX + 50, this.layout.topMargin - 20);
+
+  // Male legend
+  fill(this.maleColour);
+  rect(startX + 80, this.layout.topMargin - 20, 15, 15); // Adjust vertical position
+  fill(0);
+  text('Male', startX + 120, this.layout.topMargin - 20);
+};
+
+
+
   this.mapPercentToWidth = function(percent) {
-    return map(percent,
-               0,
-               100,
-               0,
-               this.layout.plotWidth());
+    return map(percent, 0, 100, 0, this.layout.plotWidth());
   };
+
+  this.getControls = function() {
+    var controls = [];
+
+    if (this.togglePercent) {
+        controls.push(this.togglePercent);
+    }
+
+    if (this.sortBy) {
+        controls.push(this.sortBy);
+    }
+
+    return controls;
+};
 }

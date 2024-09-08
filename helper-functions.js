@@ -20,6 +20,25 @@ function mean(data) {
   return total / data.length;
 }
 
+
+function median(values) {
+  values.sort((a, b) => a - b);
+  let middle = Math.floor(values.length / 2);
+
+  if (values.length % 2 === 0) {
+    return (values[middle - 1] + values[middle]) / 2;
+  }
+  return values[middle];
+}
+
+function stdDev(values) {
+  let avg = mean(values);
+  let squareDiffs = values.map(value => Math.pow(value - avg, 2));
+  let avgSquareDiff = mean(squareDiffs);
+  return Math.sqrt(avgSquareDiff);
+}
+
+
 function sliceRowNumbers (row, start=0, end) {
   var rowData = [];
 

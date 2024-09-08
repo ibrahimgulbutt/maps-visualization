@@ -1,13 +1,30 @@
-body{
-    font-family: sans-serif
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(45deg, #F9DBBA, #5B99C2, #1A4870, #1F316F); /* New muted color palette */
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .menu-item {
-    width: 250px;
-    height: 50px;
-    border: 1px solid gray;
-    list-style-type: none;
-    padding: 5px;
+  width: 250px;
+  height: 50px;
+  border: 1px solid gray;
+  list-style-type: none;
+  padding: 5px;
 }
 
 .container {
@@ -15,9 +32,296 @@ body{
 }
 
 .hover {
-    background: lightgray
+  background: #e1d4c5; /* Slightly darker version of #F9DBBA */
 }
 
-.selected{
-    background: gold
+.selected {
+  background: #c2b28b; /* Muted gold-like color */
 }
+
+/* General styling for the menu */
+#visuals-menu {
+  list-style: none;
+  padding: 10px;
+  margin-top: 0px;
+  margin-left: 20px;
+  margin-right: 20px;
+  background: linear-gradient(145deg, #F9DBBA, #5B99C2, #1A4870); /* New gradient for the menu */
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Slightly lighter shadow */
+}
+
+/* Styling for individual menu items */
+.menu-item {
+  padding: 10px 15px;
+  margin: 5px 0;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #5B99C2, #1A4870, #1F316F); /* Softer tones for the menu items */
+  color: white;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.08), -2px -2px 6px rgba(255, 255, 255, 0.2); /* Subtle shadows */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  transform: scale(1);
+}
+
+/* Hover effect for menu items */
+.menu-item:hover {
+  background: linear-gradient(145deg, #1A4870, #1F316F, #5B99C2); /* Muted hover effect */
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.15), -3px -3px 8px rgba(255, 255, 255, 0.3); 
+  transform: scale(1.05);
+}
+
+/* Icon inside the menu item */
+.menu-item .icon {
+  width: 20px;
+  height: 20px;
+  background: #1A4870; /* Muted blue tone */
+  border-radius: 50%;
+  margin-right: 10px;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover effect for the icon */
+.menu-item .icon:hover {
+  background: #5bc29b; /* Darker blue for hover */
+  transform: rotate(360deg);
+}
+
+/* Styling for selected menu items */
+.menu-item.selected {
+  background: linear-gradient(145deg, #5B99C2, #1A4870, #1F316F); /* Softer bold gradient for selected */
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border: 10px solid #5bc29b;
+}
+
+/* Pie Chart */
+.pie-chart-segment {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+transform-origin: center;
+}
+
+.pie-chart-segment:hover {
+transform: scale(1.1) translateZ(10px);
+cursor: pointer;
+box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Legend Items */
+.legend-item {
+font-size: 12px;
+display: flex;
+align-items: center;
+}
+
+.legend-item div {
+width: 12px;
+height: 12px;
+margin-right: 5px;
+border-radius: 50%;
+display: inline-block;
+}
+
+/* Tooltips */
+.tooltip {
+position: absolute;
+background-color: rgba(0, 0, 0, 0.7);
+color: white;
+padding: 5px;
+border-radius: 5px;
+pointer-events: none;
+font-size: 12px;
+display: none;
+}
+
+/* Dropdown styling */
+.select-dropdown {
+padding: 10px;
+border-radius: 5px;
+border: 1px solid #ccc;
+background-color: #f9f9f9;
+font-size: 16px;
+cursor: pointer;
+}
+
+.select-dropdown:focus {
+border-color: #007bff;
+box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+outline: none;
+}
+
+/* Enhanced styling for the dropdown */
+.company-select {
+  font-size: 16px;
+  padding: 10px;
+  border: 2px solid #3498db;
+  border-radius: 50px;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  position: relative;  /* or 'absolute' based on your use case */
+  z-index: 100;        /* Adjust the z-index value as per your layout needs */
+  top: 0px;           /* Adjust the position from the top */
+  left: 30px;          /* Adjust the position from the left */
+}
+
+.company-select:hover {
+  border-color: #2980b9;
+  background-color: #bdc3c7;
+}
+#pie-tooltip {
+  position: absolute;
+  padding: 8px;
+  background-color: #333;
+  color: #fff;
+  border-radius: 4px;
+  pointer-events: none; /* Ensures the tooltip doesn't block any mouse events */
+  opacity: 0; /* Start with the tooltip hidden */
+  transition: opacity 0.2s ease;
+}
+
+
+#map {
+  height: 400px;
+  width: 100%;
+  border: 1px solid #ccc;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+#map.show {
+  opacity: 1;
+}
+.tooltip {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 3px;
+  display: none; /* Initially hidden */
+}
+
+#control-panel {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #333; /* Dark background for contrast */
+  padding: 10px;
+  box-shadow: 0 -4px 8px rgba(0,0, 0, 0.2); /* Increased shadow for depth */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transform: translateY(100%); /* Start hidden */
+  transition: transform 0.4s ease-in-out;
+}
+
+#control-panel.visible {
+  transform: translateY(0); /* Slide up animation */
+}
+
+.control-item {
+  margin: 0 10px;
+  padding: 8px 12px;
+  background-color: #444;
+  border: 1px solid #555;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.control-item:hover {
+  background-color: #555;
+  transform: scale(1.1); /* Slight scale up on hover */
+}
+
+.control-item:active {
+  background-color: #666;
+  transform: scale(1.05); /* Slight shrink on click */
+}
+
+#app {
+  margin-top: 50px; /* Adjust this value to move it further down */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  color: green;
+}
+
+/* Ensure the tooltip is displayed in front */
+.tooltip {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 5px;
+  z-index: 1000; /* Make sure tooltip is on top */
+  pointer-events: none;
+}
+
+/* Adjust the legend position to the top */
+.legend {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+#paygap1997tooltip {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #000;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  color: #000;
+  pointer-events: none; /* Makes sure tooltip doesn't interfere with mouse events */
+  z-index: 1000; /* Ensures tooltip is on top of other elements */
+}
+/* Tooltip styling */
+#paygap2017tooltip {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #000;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  color: #000;
+  pointer-events: none; /* Makes sure tooltip doesn't interfere with mouse events */
+  z-index: 1000; /* Ensures tooltip is on top of other elements */
+  display: none; /* Initially hidden */
+}
+
+/* Tooltip styling for the Olympics 2021 visualization */
+#olympics2021-tooltip {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9); /* Slight transparency */
+  padding: 8px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 12px;
+  color: #000;
+  text-align: center;
+  pointer-events: none; /* Prevent mouse interaction */
+  z-index: 10;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#olympics2021-tooltip.hidden {
+  opacity: 0;
+  transform: translateY(10px); /* Animate hiding */
+}
+
+#olympics2021-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0); /* Animate showing */
+}
+

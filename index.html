@@ -10,13 +10,6 @@
     <script src="lib/p5.min.js"></script>
     <script src="lib/p5.dom.min.js"></script>
 
-<!--
-    <link rel="stylesheet"
-          href="lib/jquery-ui-themes-1.12.1/themes/ui-lightness/jquery-ui.min.css">
-    <script src="lib/jquery-3.3.1.min.js"></script>
-    <script src="lib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
--->
-
 
     <link rel="stylesheet" href="style.css">
 
@@ -29,6 +22,16 @@
     <script src="pay-gap-by-job-2017.js"></script>
     <script src="pay-gap-1997-2017.js"></script>
     <script src="climate-change.js"></script>
+    <script src="lib/p5.min.js"></script>
+    <script src="lib/p5.dom.min.js"></script>
+    <script src="Olympics2021Geography.js"></script>
+
+    <script src="OlympicsMedalBarChart.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Main visualisation files -->
+<script src="OlympicsGanttChart.js"></script>
+
+
 
     <!-- Add extra scripts below -->
     <script src="helper-functions.js"></script>
@@ -37,7 +40,12 @@
   </head>
   <body>
     <div id="app" class="container">
-      <ul id="visuals-menu"></ul>
+      <ul id="visuals-menu" class="menu">
+        <!-- Menu items will be dynamically added here -->
+      </ul>
+      <div id="control-panel"></div>
+
+      
     </div>
   </body>
 </html>
